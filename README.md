@@ -8,7 +8,7 @@ Quickly copy file from one path to another. No bullshit, ultra-simple, async and
 
 ## Usage
 
-* `copyFile(fromPath, toPath, callback]);` — `String`, `String`, `(optional) Function`
+* `copyFile(fromPath, toPath, callback);` — `String`, `String`, `(optional) Function`
 * `callback(error)` optionally receives error when the execution failed.
 
 Node.js:
