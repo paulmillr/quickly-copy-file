@@ -16,7 +16,7 @@ Node.js:
 ```javascript
 var copyFile = require('quickly-copy-file');
 copyFile('original.js', 'copy.js', function(error) {
-  if (error) console.error(error);
+  if (error) return console.error(error);
   console.log('File was copied!')
 });
 ```
