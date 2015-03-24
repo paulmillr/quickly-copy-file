@@ -1,0 +1,33 @@
+{
+  "name": "quickly-copy-file",
+  "version": "0.1.0",
+  "description": "Quickly copy file from one path to another. No bullshit, ultra-simple, async and just one dep.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:paulmillr/quickly-copy-files.git"
+  },
+  "keywords": [
+    "quick",
+    "fast",
+    "copy",
+    "files",
+    "file",
+    "fs",
+    "clone",
+    "contents",
+    "content"
+  ],
+  "author": "Paul Miller (http://paulmillr.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paulmillr/quickly-copy-files/issues"
+  },
+  "homepage": "https://github.com/paulmillr/quickly-copy-files",
+  "dependencies": {
+    "mkdirp": "~0.5.0"
+  }
+}
