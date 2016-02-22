@@ -1,64 +1,74 @@
 'use strict';
 
-var fs = require('fs');
-var dirname = require('path').dirname;
-var mkdirp = require('mkdirp');
+const fs = require('fs');
+const dirname = require('path').dirname;
+const mkdirp = require('mkdirp');
 
-var copyCounter = 0;
-var copyQueue = [];
-var emptyFn = Function.prototype;
+let copyCounter = 0;
+const timeoutTick = 100;
+const copyQueue = [];
+const emptyFn = Function.prototype;
 
-var copyFile = function(source, destination, callback) {
-  if (callback == null) callback = emptyFn;
+const copyFile = (source, destination) => {
+  const parentDir = dirname(destination);
 
-  var attempt = function(error, retries) {
-    if (retries == null) retries = 0;
-    if (error != null) return callback(error);
+  return new Promise((resolve, reject) => {
+    let ended = false; // Makes sure callback is called only once.
+    const callback = (error) => {
+      if (ended) return;
+      ended = true;
+      if (error) reject(error);
+      else resolve();
+    };
 
-    copyCounter++;
+    const attempt = (error, retries) => {
+      if (error != null) return callback(error);
+      if (retries == null) retries = 0;
 
-    var instanceError = false;
-    var onError = function(err) {
-      if (instanceError) return;
-      instanceError = true;
-      copyCounter--;
-      if (retries >= 5) return callback(err);
-      var code = err.code;
-      if (code === 'OK' || code === 'UNKNOWN' || code === 'EMFILE') {
-        copyQueue.push(function() { attempt(null, ++retries); });
-      } else if (code === 'EBUSY') {
-        var timeout = 100 * ++retries;
-        setTimeout(function() { attempt(null, retries); }, timeout);
+      ++copyCounter;
+
+      const instanceError = false;
+      const onError = (err) => {
+        if (instanceError) return;
+        instanceError = true;
+        --copyCounter;
+        if (retries >= 5) return callback(err);
+        const code = err.code;
+        if (code === 'OK' || code === 'UNKNOWN' || code === 'EMFILE') {
+          copyQueue.push(() => { attempt(null, ++retries); });
+        } else if (code === 'EBUSY') {
+          const timeout = timeoutTick * ++retries;
+          setTimeout(() => { attempt(null, retries); }, timeout);
+        } else {
+          return callback(err);
+        }
+      };
+
+      let onClose = () => {
+        if (--copyCounter < 1 && copyQueue.length) {
+          const nextFn = copyQueue.shift();
+          process.nextTick(nextFn);
+        }
+        onClose = emptyFn;
+        callback();
+      };
+
+      const input = fs.createReadStream(source);
+      const output = input.pipe(fs.createWriteStream(destination));
+      input.on('error', onError);
+      output.on('error', onError);
+      output.on('close', onClose);
+      output.on('finish', onClose);
+    };
+
+    fs.exists(parentDir, (exists) => {
+      if (!exists) return mkdirp(parentDir, attempt);
+      if (copyQueue.length) {
+        copyQueue.push(attempt);
       } else {
-        callback(err);
+        attempt();
       }
-    };
-
-    var onClose = function() {
-      if (--copyCounter < 1 && copyQueue.length) {
-        var nextFn = copyQueue.shift();
-        process.nextTick(nextFn);
-      }
-      onClose = emptyFn;
-      callback();
-    };
-
-    var input = fs.createReadStream(source);
-    var output = input.pipe(fs.createWriteStream(destination));
-    input.on('error', onError);
-    output.on('error', onError);
-    output.on('close', onClose);
-    output.on('finish', onClose);
-  };
-
-  var parentDir = dirname(destination);
-  fs.exists(parentDir, function(exists) {
-    if (!exists) return mkdirp(parentDir, attempt);
-    if (copyQueue.length) {
-      copyQueue.push(attempt);
-    } else {
-      attempt();
-    }
+    });
   });
 };
 

@@ -4,11 +4,11 @@
   "description": "Quickly copy file from one path to another. No bullshit, ultra-simple, async and just one dep.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint index && ava"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:paulmillr/quickly-copy-files.git"
+    "url": "git@github.com:paulmillr/quickly-copy-file.git"
   },
   "keywords": [
     "quick",
@@ -21,6 +21,9 @@
     "contents",
     "content"
   ],
+  "files": [
+    "index.js"
+  ],
   "author": "Paul Miller (http://paulmillr.com/)",
   "license": "MIT",
   "bugs": {
@@ -29,5 +32,9 @@
   "homepage": "https://github.com/paulmillr/quickly-copy-file",
   "dependencies": {
     "mkdirp": "~0.5.0"
+  },
+  "devDependencies": {
+    "ava": "^0.12.0",
+    "eslint": "^2.2.0"
   }
 }
