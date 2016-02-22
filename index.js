@@ -27,7 +27,7 @@ const copyFile = (source, destination) => {
 
       ++copyCounter;
 
-      const instanceError = false;
+      let instanceError = false;
       const onError = (err) => {
         if (instanceError) return;
         instanceError = true;
