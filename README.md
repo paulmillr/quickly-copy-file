@@ -8,19 +8,17 @@ Quickly copy file from one path to another. No bullshit, ultra-simple, async and
 
 ## Usage
 
-* `copyFile(fromPath, toPath, callback);`
+* `copyFile(fromPath, toPath)`
     * `fromPath` - `String` Path to file that will be copied.
     * `toPath` - `String` File system path that will be created etc.
-    * `callback(error)` optional callback, that receives error when the execution failed.
 
 Node.js:
 
 ```javascript
 var copyFile = require('quickly-copy-file');
-copyFile('original.js', 'copy.js', function(error) {
-  if (error) return console.error(error);
-  console.log('File was copied!')
-});
+copyFile('original.js', 'copy.js')
+  .then(() => console.log('File was copied!'))
+  .catch(error => console.error(error););
 ```
 
 ## License
