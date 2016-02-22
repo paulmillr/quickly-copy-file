@@ -1,6 +1,6 @@
 {
   "name": "quickly-copy-file",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Quickly copy file from one path to another. No bullshit, ultra-simple, async and just one dep.",
   "main": "index.js",
   "scripts": {
